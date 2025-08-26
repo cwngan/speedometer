@@ -5,22 +5,24 @@ export function setupSpeedometer(element: HTMLDivElement) {
     element.innerHTML = `${speed ?? "--"} km/h`;
   };
 
-  const updateSpeed = () => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { speed: newSpeed } = position.coords;
-        if (newSpeed === null) {
-          setSpeed(null);
-          return;
-        }
+  let clearSpeedTimeout: number | undefined;
 
-        const speedInKMH = newSpeed * 3.6;
-        setSpeed(Math.round(speedInKMH * 100) / 100);
-      },
-      null,
-      { enableHighAccuracy: true }
-    );
-  };
+  navigator.geolocation.watchPosition(
+    (position) => {
+      if (clearSpeedTimeout !== undefined) clearTimeout(clearSpeedTimeout);
 
-  setInterval(updateSpeed, 1000);
+      const { speed: newSpeed } = position.coords;
+      if (newSpeed === null) {
+        setSpeed(null);
+        return;
+      }
+
+      const speedInKMH = newSpeed * 3.6;
+      setSpeed(Math.round(speedInKMH * 100) / 100);
+
+      clearSpeedTimeout = setTimeout(() => setSpeed(null), 1000);
+    },
+    () => setSpeed(null),
+    { enableHighAccuracy: true }
+  );
 }
