@@ -8,7 +8,13 @@ export function setupSpeedometer(element: HTMLDivElement) {
   navigator.geolocation.watchPosition(
     (position) => {
       const { speed: newSpeed } = position.coords;
-      setSpeed(newSpeed === null ? null : Math.round(newSpeed * 100) / 100);
+      if (newSpeed === null) {
+        setSpeed(null);
+        return;
+      }
+
+      const speedInKMH = newSpeed * 3.6;
+      setSpeed(Math.round(speedInKMH * 100) / 100);
     },
     null,
     { enableHighAccuracy: true }
