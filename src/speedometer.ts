@@ -20,7 +20,7 @@ export function setupSpeedometer(element: HTMLDivElement) {
       const speedInKMH = newSpeed * 3.6;
       setSpeed(Math.round(speedInKMH * 100) / 100);
 
-      clearSpeedTimeout = setTimeout(() => setSpeed(null), 3000);
+      clearSpeedTimeout = setTimeout(() => setSpeed(null), 5000);
     },
     () => setSpeed(null),
     { enableHighAccuracy: true }
